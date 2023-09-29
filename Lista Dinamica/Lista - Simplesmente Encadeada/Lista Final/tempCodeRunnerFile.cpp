@@ -1,0 +1,1 @@
+    remover(valore,4);
