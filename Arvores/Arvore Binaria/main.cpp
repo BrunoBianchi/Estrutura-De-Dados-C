@@ -24,6 +24,7 @@ int main()
     insercao(&inicio, 2);
     insercao(&inicio, 4);
     insercao(&inicio, 7);
+    deletar(&inicio,3);
     insercao(&inicio, 6);
     insercao(&inicio, 8);
     insercao(&inicio, 1);
@@ -46,14 +47,14 @@ void insercao(struct nodo **inicio, int value)
     }
     else
     {
-        // Verificar se o valor adicionado eh menor que o valor
+        // Verificar se o value adicionado eh menor que o value
         if (value < aux->value)
         {
             // Verificar se ha algum elemento a esquerda
             if (aux->esquerda == NULL)
             {
                 aux->esquerda = novo_no;
-                printf("Valor %d adicionado ah esquerda do valor %d\n", value, aux->value);
+                printf("value %d adicionado ah esquerda do value %d\n", value, aux->value);
                 return;
                 // Recursao ate achar uma posicao disponivel ah esquerda
             }
@@ -62,15 +63,15 @@ void insercao(struct nodo **inicio, int value)
                 insercao(&(aux->esquerda), value);
                 return;
             }
-            // Verificar se o valor adicionado eh maior que o valoe
+            // Verificar se o value adicionado eh maior que o valoe
         }
         else if (value > aux->value)
         {
-            // Verificar se ah valor ah direita
+            // Verificar se ah value ah direita
             if (aux->direita == NULL)
             {
                 aux->direita = novo_no;
-                printf("Valor %d adicionado ah direita do valor %d\n", value, aux->value);
+                printf("value %d adicionado ah direita do value %d\n", value, aux->value);
                 return;
             }
             else
@@ -91,13 +92,57 @@ void imprimir(struct nodo **inicio)
     {
         return;
     }
-    // Recursividade para imprimir todos os valores que sao menores que o nodo
+    // Recursividade para imprimir todos os valuees que sao menores que o nodo
     imprimir(&(aux->esquerda));
     printf("%d\n", aux->value);
-    // Recursividade para imprimir todos os valores que sao maiores que o nodo
+    // Recursividade para imprimir todos os valuees que sao maiores que o nodo
     imprimir(&(aux->direita));
 }
-// TODO Fazer script para deletar valor da Arvore
+
 void deletar(struct nodo **inicio, int value)
 {
+  	struct nodo *filho = *inicio;
+	struct nodo *pai;
+	do{
+		pai = filho;
+		if(value < filho->value)
+			filho = filho->esquerda;
+		else if(value > filho->value)
+			filho = filho->direita;	
+	}while(filho!=NULL && filho->value != value);
+
+	if(filho != NULL){ // nodo com o value correspondente encontrado
+		if(filho->esquerda == NULL && filho->direita == NULL){ // nodo folha
+			printf("%d é nodo folha\n",value);
+			if(pai->esquerda == filho) pai->esquerda = NULL;
+			if(pai->direita == filho) pai->direita = NULL;
+		}
+		if(filho->esquerda != NULL && filho->direita == NULL){ // nodo com 1 filho a esquerda
+			printf("%d tem um filho a esquerda\n",value);
+			if(pai->esquerda == filho) pai->esquerda = filho->esquerda;
+			if(pai->direita == filho) pai->direita = filho->esquerda;
+		}
+		if(filho->esquerda == NULL && filho->direita != NULL){ // nodo com 1 filho a direita
+			printf("%d tem um filho a direita\n",value);
+			if(pai->esquerda == filho) pai->esquerda = filho->direita;
+			if(pai->direita == filho) pai->direita = filho->direita;
+		}
+		if(filho->esquerda != NULL && filho->direita != NULL) // nodo com 2 filhos
+		{
+			printf("%d tem dois filhos\n",value);
+			if(filho->esquerda->direita==NULL){
+				filho->value = filho->esquerda->value;
+				filho->esquerda = NULL;
+			}else{
+				struct nodo *p = filho->esquerda;
+				struct nodo *aux = p;
+				while(p->direita != NULL){
+					aux = p;
+					p = p->direita;
+				}
+				aux->direita = NULL;
+				filho->value = p->value;
+			}
+		}
+	}
 }
